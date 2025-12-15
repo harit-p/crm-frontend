@@ -1,16 +1,8 @@
-import axios from 'axios';
-
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Helper to get auth token
 const getAuthToken = () => {
     return localStorage.getItem('crm_token');
-};
-
-// Helper to get auth headers
-const getAuthHeaders = () => {
-    const token = getAuthToken();
-    return token ? { 'Authorization': `Bearer ${token}` } : {};
 };
 
 export const crmApi = {
