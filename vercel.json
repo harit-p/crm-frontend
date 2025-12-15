@@ -1,0 +1,13 @@
+{
+    "buildCommand": "cd crm-frontend && npm run build",
+    "outputDirectory": "crm-frontend/dist",
+    "installCommand": "cd crm-frontend && npm install",
+    "framework": "vite",
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
+}
+
