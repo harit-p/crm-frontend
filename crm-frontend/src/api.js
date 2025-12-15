@@ -2,16 +2,116 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Helper to get auth token
+const getAuthToken = () => {
+    return localStorage.getItem('crm_token');
+};
+
+// Helper to get auth headers
+const getAuthHeaders = () => {
+    const token = getAuthToken();
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+};
+
 export const crmApi = {
+    // Authentication endpoints
+    login: async (email, password) => {
+        try {
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify({ 
+                    action: "login",
+                    email: email,
+                    password: password
+                }),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Login Error:", error);
+            return { status: "error", message: error.message || "Login failed" };
+        }
+    },
+
+    register: async (name, email, password, role) => {
+        try {
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify({ 
+                    action: "register",
+                    name: name,
+                    email: email,
+                    password: password,
+                    role: role
+                }),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Register Error:", error);
+            return { status: "error", message: error.message || "Registration failed" };
+        }
+    },
+
+    verifyToken: async (token) => {
+        try {
+            // Don't send custom headers for GET requests to avoid CORS preflight
+            const response = await fetch(`${API_URL}?action=verifyToken&token=${encodeURIComponent(token)}`, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Token Verification Error:", error);
+            return { status: "error", message: "Token verification failed" };
+        }
+    },
+
     // Fetch all opportunities
     getOpportunities: async () => {
-        // Apps Script requires 'text/plain' or weird headers to avoid CORS preflight issues sometimes, 
-        // but standard GET usually works with 'no-cors' mode IF we just need opaque response, 
-        // BUT we need data.
-        // Standard fetch with redirect following is best for GAS Web Apps.
         try {
-            const response = await axios.get(`${API_URL}?action=getOpportunities`);
-            return response.data;
+            // Don't send custom headers for GET requests to avoid CORS preflight
+            // Pass token as query parameter instead
+            const token = getAuthToken();
+            const url = token 
+                ? `${API_URL}?action=getOpportunities&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getOpportunities`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
         } catch (error) {
             console.error("API Error:", error);
             return { status: "error", message: error.message };
@@ -21,8 +121,24 @@ export const crmApi = {
     // Fetch Metadata (Stages)
     getMeta: async () => {
         try {
-            const response = await axios.get(`${API_URL}?action=getMeta`);
-            return response.data;
+            // Don't send custom headers for GET requests to avoid CORS preflight
+            // Pass token as query parameter instead
+            const token = getAuthToken();
+            const url = token 
+                ? `${API_URL}?action=getMeta&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getMeta`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
         } catch (error) {
             console.error("API Error:", error);
             return { status: "error", message: error.message };
@@ -30,17 +146,58 @@ export const crmApi = {
     },
 
     // Update Stage (uses POST)
-    // Note: GAS Web Apps need specific handling for POST (CORS).
-    // Often simpler to use 'no-cors' fetch or send data as URL params if body fails,
-    // but let's try standard POST first.
-    updateStage: async (id, stage) => {
+    updateStage: async (payload) => {
         try {
-            // Using 'application/x-www-form-urlencoded' often works better with GAS than JSON
-            const response = await axios.post(`${API_URL}`,
-                JSON.stringify({ action: "updateStage", id, stage }),
-                { headers: { "Content-Type": "text/plain;charset=utf-8" } }
-            );
-            return response.data;
+            // For POST, include token in body to avoid CORS preflight issues
+            const token = getAuthToken();
+            const body = { 
+                action: "updateStage", 
+                ...payload,
+                token: token // Include token in body instead of header
+            };
+            
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(body),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    // Get tasks for an opportunity
+    getTasksForOpportunity: async (opportunityId) => {
+        try {
+            // Don't send custom headers for GET requests to avoid CORS preflight
+            // Pass token as query parameter instead
+            const token = getAuthToken();
+            const url = token
+                ? `${API_URL}?action=getTasks&opportunityId=${opportunityId}&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getTasks&opportunityId=${opportunityId}`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
         } catch (error) {
             console.error("API Error:", error);
             return { status: "error", message: error.message };
