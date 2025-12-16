@@ -194,6 +194,77 @@ export const AuthProvider = ({ children }) => {
         return false;
     };
 
+    // Check if user can edit an account
+    const canEditAccount = (account) => {
+        if (!user || !user.Role) return false;
+        
+        // Exec is read-only
+        if (user.Role === 'Exec') {
+            return false;
+        }
+        
+        // Ops/Management can edit all
+        if (user.Role === 'Ops/Management') {
+            return true;
+        }
+        
+        // Data Specialist and Sales Rep can edit accounts (they have edit_accounts permission)
+        if (user.Role === 'Data Specialist' || user.Role === 'Sales Rep') {
+            return true;
+        }
+        
+        return false;
+    };
+
+    // Check if user can edit a contact
+    const canEditContact = (contact) => {
+        if (!user || !user.Role) return false;
+        
+        // Exec is read-only
+        if (user.Role === 'Exec') {
+            return false;
+        }
+        
+        // Ops/Management can edit all
+        if (user.Role === 'Ops/Management') {
+            return true;
+        }
+        
+        // Data Specialist and Sales Rep can edit contacts (they have edit_contacts permission)
+        if (user.Role === 'Data Specialist' || user.Role === 'Sales Rep') {
+            return true;
+        }
+        
+        return false;
+    };
+
+    // Check if user can edit a task
+    const canEditTask = (task) => {
+        if (!user || !user.Role) return false;
+        
+        // Exec is read-only
+        if (user.Role === 'Exec') {
+            return false;
+        }
+        
+        // Ops/Management can edit all tasks
+        if (user.Role === 'Ops/Management') {
+            return true;
+        }
+        
+        // Sales Rep can edit own tasks
+        if (user.Role === 'Sales Rep') {
+            return task.Owner === user.Name || !task.Owner;
+        }
+        
+        // Data Specialist can edit own tasks
+        if (user.Role === 'Data Specialist') {
+            return task.Owner === user.Name || !task.Owner;
+        }
+        
+        return false;
+    };
+
     const value = {
         user,
         isAuthenticated,
@@ -204,7 +275,10 @@ export const AuthProvider = ({ children }) => {
         hasRole,
         hasPermission,
         canMoveToStage,
-        canEditDeal
+        canEditDeal,
+        canEditAccount,
+        canEditContact,
+        canEditTask
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

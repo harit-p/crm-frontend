@@ -4,6 +4,9 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './components/Login';
 import { Register } from './components/Register';
 import { KanbanBoard } from './components/KanbanBoard';
+import { TasksPage } from './components/TasksPage';
+import { ContactsPage } from './components/ContactsPage';
+import { AccountsPage } from './components/AccountsPage';
 
 function App() {
   return (
@@ -17,6 +20,30 @@ function App() {
             element={
               <ProtectedRoute>
                 <KanbanBoard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/tasks" 
+            element={
+              <ProtectedRoute>
+                <TasksPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/contacts" 
+            element={
+              <ProtectedRoute>
+                <ContactsPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/accounts" 
+            element={
+              <ProtectedRoute>
+                <AccountsPage />
               </ProtectedRoute>
             } 
           />

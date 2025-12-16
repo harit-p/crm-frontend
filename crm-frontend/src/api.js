@@ -169,6 +169,37 @@ export const crmApi = {
         }
     },
 
+    // Create new opportunity/lead
+    createOpportunity: async (opportunityData) => {
+        try {
+            const token = getAuthToken();
+            const body = { 
+                action: "createOpportunity", 
+                ...opportunityData,
+                token: token
+            };
+            
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(body),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
     // Get tasks for an opportunity
     getTasksForOpportunity: async (opportunityId) => {
         try {
@@ -178,6 +209,394 @@ export const crmApi = {
             const url = token
                 ? `${API_URL}?action=getTasks&opportunityId=${opportunityId}&token=${encodeURIComponent(token)}`
                 : `${API_URL}?action=getTasks&opportunityId=${opportunityId}`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    // Accounts CRUD
+    getAccounts: async () => {
+        try {
+            const token = getAuthToken();
+            const url = token 
+                ? `${API_URL}?action=getAccounts&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getAccounts`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    createAccount: async (accountData) => {
+        try {
+            const token = getAuthToken();
+            const body = { 
+                action: "createAccount", 
+                ...accountData,
+                token: token
+            };
+            
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(body),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    updateAccount: async (accountId, accountData) => {
+        try {
+            const token = getAuthToken();
+            const body = { 
+                action: "updateAccount",
+                id: accountId,
+                ...accountData,
+                token: token
+            };
+            
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(body),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    deleteAccount: async (accountId) => {
+        try {
+            const token = getAuthToken();
+            const body = { 
+                action: "deleteAccount",
+                id: accountId,
+                token: token
+            };
+            
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(body),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    // Contacts CRUD
+    getContacts: async (accountId = null) => {
+        try {
+            const token = getAuthToken();
+            let url = token 
+                ? `${API_URL}?action=getContacts&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getContacts`;
+            
+            if (accountId) {
+                url += `&accountId=${accountId}`;
+            }
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    createContact: async (contactData) => {
+        try {
+            const token = getAuthToken();
+            const body = { 
+                action: "createContact", 
+                ...contactData,
+                token: token
+            };
+            
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(body),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    updateContact: async (contactId, contactData) => {
+        try {
+            const token = getAuthToken();
+            const body = { 
+                action: "updateContact",
+                id: contactId,
+                ...contactData,
+                token: token
+            };
+            
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(body),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    deleteContact: async (contactId) => {
+        try {
+            const token = getAuthToken();
+            const body = { 
+                action: "deleteContact",
+                id: contactId,
+                token: token
+            };
+            
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(body),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    // Tasks CRUD
+    getAllTasks: async (filters = {}) => {
+        try {
+            const token = getAuthToken();
+            let url = token 
+                ? `${API_URL}?action=getAllTasks&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getAllTasks`;
+            
+            // Add filters as query params
+            if (filters.opportunityId) {
+                url += `&opportunityId=${filters.opportunityId}`;
+            }
+            if (filters.accountId) {
+                url += `&accountId=${filters.accountId}`;
+            }
+            if (filters.owner) {
+                url += `&owner=${encodeURIComponent(filters.owner)}`;
+            }
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    createTask: async (taskData) => {
+        try {
+            const token = getAuthToken();
+            const body = { 
+                action: "createTask", 
+                ...taskData,
+                token: token
+            };
+            
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(body),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    updateTask: async (taskId, taskData) => {
+        try {
+            const token = getAuthToken();
+            const body = { 
+                action: "updateTask",
+                id: taskId,
+                ...taskData,
+                token: token
+            };
+            
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(body),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    deleteTask: async (taskId) => {
+        try {
+            const token = getAuthToken();
+            const body = { 
+                action: "deleteTask",
+                id: taskId,
+                token: token
+            };
+            
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(body),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    // Get users list (for assigning tasks/accounts)
+    getUsers: async () => {
+        try {
+            const token = getAuthToken();
+            const url = token 
+                ? `${API_URL}?action=getUsers&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getUsers`;
             
             const response = await fetch(url, {
                 method: 'GET',
