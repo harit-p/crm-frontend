@@ -1,8 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, DollarSign, User, Calendar, MapPin, FileText, TrendingUp } from 'lucide-react';
+import { X, DollarSign, User, Calendar, MapPin, FileText, TrendingUp, Paperclip, CheckSquare } from 'lucide-react';
+import { crmApi } from '../api';
 
 export const DealDetailsModal = ({ isOpen, onClose, deal }) => {
+  const [tasks, setTasks] = useState([]);
+  const [loadingTasks, setLoadingTasks] = useState(false);
+  
+  useEffect(() => {
+    if (isOpen && deal && (deal.id || deal['Opportunity ID'])) {
+      fetchTasks();
+    }
+  }, [isOpen, deal]);
+
+  const fetchTasks = async () => {
+    const opportunityId = deal.id || deal['Opportunity ID'];
+    if (!opportunityId) return;
+    
+    setLoadingTasks(true);
+    try {
+      const result = await crmApi.getTasksForOpportunity(opportunityId);
+      if (result.status === 'success') {
+        setTasks(result.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    } finally {
+      setLoadingTasks(false);
+    }
+  };
+
   if (!deal) return null;
 
   // Format date
@@ -152,9 +179,18 @@ export const DealDetailsModal = ({ isOpen, onClose, deal }) => {
                   padding: '12px 16px',
                   flex: 1
                 }}>
-                  <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '4px' }}>Revenue</div>
+                  <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '4px' }}>Potential Value</div>
                   <div style={{ fontSize: '20px', fontWeight: '700' }}>
-                    {formatCurrency(deal.revenue || deal['Estimated Revenue'])}
+                    {(() => {
+                      // Show best available value: Final Deal Value > Proposal Amount > Updated Quote > Estimated Revenue
+                      const finalDealValue = parseFloat(deal['Final Deal Value'] || deal.FinalDealValue || 0);
+                      const proposalAmount = parseFloat(deal['Proposal Amount'] || deal.ProposalAmount || 0);
+                      const updatedQuote = parseFloat(deal['Updated Quote'] || deal.UpdatedQuote || 0);
+                      const estimatedRevenue = parseFloat(deal['Estimated Revenue'] || deal.EstimatedRevenue || deal.revenue || 0);
+                      
+                      const value = finalDealValue || proposalAmount || updatedQuote || estimatedRevenue;
+                      return formatCurrency(value);
+                    })()}
                   </div>
                 </div>
                 <div style={{
@@ -316,6 +352,149 @@ export const DealDetailsModal = ({ isOpen, onClose, deal }) => {
                 </div>
               )}
 
+              {/* General Notes */}
+              {hasValue('Notes') && (
+                <div style={{ marginBottom: '32px' }}>
+                  <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1f2937', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <FileText size={18} color="#667eea" />
+                    Notes
+                  </h3>
+                  <div style={{ background: '#f9fafb', borderRadius: '12px', padding: '16px' }}>
+                    <div style={{ fontSize: '14px', color: '#1f2937', whiteSpace: 'pre-wrap' }}>
+                      {getFieldValue('Notes')}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Attachments */}
+              {hasValue('Attachments') && (
+                <div style={{ marginBottom: '32px' }}>
+                  <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1f2937', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Paperclip size={18} color="#667eea" />
+                    Attachments
+                  </h3>
+                  <div style={{ background: '#f9fafb', borderRadius: '12px', padding: '16px' }}>
+                    {(() => {
+                      const attachments = getFieldValue('Attachments');
+                      const attachmentLinks = attachments.split(',').map(link => link.trim()).filter(link => link);
+                      return (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          {attachmentLinks.map((link, index) => (
+                            <a
+                              key={index}
+                              href={link.startsWith('http') ? link : `https://${link}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                color: '#3b82f6',
+                                textDecoration: 'none',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                fontSize: '14px',
+                                padding: '8px',
+                                background: 'white',
+                                borderRadius: '6px',
+                                border: '1px solid #e5e7eb',
+                                transition: 'all 0.2s'
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.background = '#f3f4f6';
+                                e.currentTarget.style.textDecoration = 'underline';
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.background = 'white';
+                                e.currentTarget.style.textDecoration = 'none';
+                              }}
+                            >
+                              <Paperclip size={14} />
+                              {link.length > 50 ? link.substring(0, 50) + '...' : link}
+                            </a>
+                          ))}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </div>
+              )}
+
+              {/* Tasks */}
+              <div style={{ marginBottom: '32px' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1f2937', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <CheckSquare size={18} color="#667eea" />
+                  Tasks ({tasks.length})
+                </h3>
+                <div style={{ background: '#f9fafb', borderRadius: '12px', padding: '16px' }}>
+                  {loadingTasks ? (
+                    <div style={{ textAlign: 'center', padding: '20px', color: '#9ca3af' }}>
+                      Loading tasks...
+                    </div>
+                  ) : tasks.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '20px', color: '#9ca3af' }}>
+                      No tasks associated with this opportunity.
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {tasks.map((task, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            background: 'white',
+                            borderRadius: '8px',
+                            padding: '12px',
+                            border: '1px solid #e5e7eb',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#1f2937', marginBottom: '4px' }}>
+                              {task.Subject || task['Subject'] || 'Untitled Task'}
+                            </div>
+                            <div style={{ fontSize: '12px', color: '#6b7280', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                              {task['Due Date'] || task.DueDate ? (
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                  <Calendar size={12} />
+                                  {formatDate(task['Due Date'] || task.DueDate)}
+                                </span>
+                              ) : null}
+                              {task.Priority || task['Priority'] ? (
+                                <span style={{
+                                  padding: '2px 8px',
+                                  borderRadius: '4px',
+                                  background: task.Priority === 'High' || task['Priority'] === 'High' ? '#fee2e2' : 
+                                             task.Priority === 'Medium' || task['Priority'] === 'Medium' ? '#fef3c7' : '#d1fae5',
+                                  color: task.Priority === 'High' || task['Priority'] === 'High' ? '#991b1b' : 
+                                        task.Priority === 'Medium' || task['Priority'] === 'Medium' ? '#92400e' : '#065f46',
+                                  fontSize: '11px',
+                                  fontWeight: '500'
+                                }}>
+                                  {task.Priority || task['Priority']}
+                                </span>
+                              ) : null}
+                              {task.Status || task['Status'] ? (
+                                <span style={{
+                                  padding: '2px 8px',
+                                  borderRadius: '4px',
+                                  background: task.Status === 'Completed' || task['Status'] === 'Completed' ? '#d1fae5' : '#e0e7ff',
+                                  color: task.Status === 'Completed' || task['Status'] === 'Completed' ? '#065f46' : '#3730a3',
+                                  fontSize: '11px',
+                                  fontWeight: '500'
+                                }}>
+                                  {task.Status || task['Status']}
+                                </span>
+                              ) : null}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {/* Show message if no details - check all possible fields */}
               {!hasValue('Contact Name') && 
                !hasValue('Email or Phone') && 
@@ -325,7 +504,10 @@ export const DealDetailsModal = ({ isOpen, onClose, deal }) => {
                !hasValue('Qualification Score') && 
                !hasValue('Updated Quote') && 
                !hasValue('Final Deal Value') && 
-               !hasValue('Reason Lost') && (
+               !hasValue('Reason Lost') && 
+               !hasValue('Notes') && 
+               !hasValue('Attachments') && 
+               tasks.length === 0 && (
                 <div style={{ textAlign: 'center', padding: '40px', color: '#9ca3af' }}>
                   <p>No additional details available for this opportunity.</p>
                 </div>

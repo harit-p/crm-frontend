@@ -99,7 +99,7 @@ export const AccountsPage = () => {
             return;
         }
         
-        if (!window.confirm('Are you sure you want to delete this account? This will also delete associated contacts and opportunities.')) {
+        if (!window.confirm('Are you sure you want to delete this account? This will also delete associated contacts.')) {
             return;
         }
 

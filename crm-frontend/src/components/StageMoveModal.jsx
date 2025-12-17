@@ -508,6 +508,96 @@ export const StageMoveModal = ({ isOpen, onClose, deal, onSave }) => {
                                     </p>
                                 )}
 
+                                {/* Optional Fields: Notes and Attachments */}
+                                <div style={{
+                                    height: '1px',
+                                    background: 'linear-gradient(90deg, transparent, #e5e7eb, transparent)',
+                                    margin: '24px 0 16px 0'
+                                }}></div>
+
+                                <div style={{
+                                    fontSize: '12px',
+                                    fontWeight: '700',
+                                    color: '#667eea',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '1px',
+                                    marginBottom: '16px'
+                                }}>
+                                    Optional Fields
+                                </div>
+
+                                {/* Notes Field */}
+                                <div style={{ marginBottom: '16px' }}>
+                                    <label style={{
+                                        display: 'block',
+                                        fontSize: '14px',
+                                        fontWeight: '500',
+                                        color: '#374151',
+                                        marginBottom: '8px'
+                                    }}>
+                                        Notes
+                                    </label>
+                                    <textarea
+                                        placeholder="Add general notes about this opportunity..."
+                                        value={formData['Notes'] || ''}
+                                        style={{
+                                            width: '100%',
+                                            padding: '12px 16px',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '12px',
+                                            fontSize: '14px',
+                                            outline: 'none',
+                                            transition: 'all 0.2s',
+                                            fontFamily: 'Inter, sans-serif',
+                                            resize: 'vertical',
+                                            minHeight: '100px'
+                                        }}
+                                        rows={3}
+                                        onChange={(e) => handleInputChange('Notes', e.target.value)}
+                                        onFocus={(e) => e.target.style.borderColor = '#667eea'}
+                                        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                                    />
+                                </div>
+
+                                {/* Attachments Field */}
+                                <div style={{ marginBottom: '16px' }}>
+                                    <label style={{
+                                        display: 'block',
+                                        fontSize: '14px',
+                                        fontWeight: '500',
+                                        color: '#374151',
+                                        marginBottom: '8px'
+                                    }}>
+                                        Attachments (URLs)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter file URLs separated by commas (e.g., https://drive.google.com/file/..., https://example.com/file.pdf)"
+                                        value={formData['Attachments'] || ''}
+                                        style={{
+                                            width: '100%',
+                                            padding: '12px 16px',
+                                            border: '2px solid #e5e7eb',
+                                            borderRadius: '12px',
+                                            fontSize: '14px',
+                                            outline: 'none',
+                                            transition: 'all 0.2s',
+                                            fontFamily: 'Inter, sans-serif'
+                                        }}
+                                        onChange={(e) => handleInputChange('Attachments', e.target.value)}
+                                        onFocus={(e) => e.target.style.borderColor = '#667eea'}
+                                        onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                                    />
+                                    <p style={{
+                                        marginTop: '6px',
+                                        fontSize: '12px',
+                                        color: '#6b7280',
+                                        fontStyle: 'italic'
+                                    }}>
+                                        Separate multiple URLs with commas
+                                    </p>
+                                </div>
+
                                 {errors.submit && (
                                     <div style={{
                                         padding: '12px 16px',
