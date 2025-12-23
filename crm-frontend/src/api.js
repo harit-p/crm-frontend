@@ -613,5 +613,394 @@ export const crmApi = {
             console.error("API Error:", error);
             return { status: "error", message: error.message };
         }
+    },
+
+    // SLA & Alerts endpoints
+    getAlerts: async () => {
+        try {
+            const token = getAuthToken();
+            const url = token 
+                ? `${API_URL}?action=getAlerts&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getAlerts`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    checkOverdueTasks: async () => {
+        try {
+            const token = getAuthToken();
+            const url = token 
+                ? `${API_URL}?action=checkOverdueTasks&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=checkOverdueTasks`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    checkStatusStagnation: async () => {
+        try {
+            const token = getAuthToken();
+            const url = token 
+                ? `${API_URL}?action=checkStatusStagnation&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=checkStatusStagnation`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    // Gmail integration
+    sendGmailEmail: async (emailData) => {
+        try {
+            const token = getAuthToken();
+            const body = { 
+                action: "sendGmailEmail", 
+                ...emailData,
+                token: token
+            };
+            
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(body),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    // Google Calendar integration
+    createCalendarEvent: async (eventData) => {
+        try {
+            const token = getAuthToken();
+            const body = { 
+                action: "createCalendarEvent", 
+                ...eventData,
+                token: token
+            };
+            
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(body),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    // Google Drive integration
+    storeDocument: async (documentData) => {
+        try {
+            const token = getAuthToken();
+            const body = { 
+                action: "storeDocument", 
+                ...documentData,
+                token: token
+            };
+            
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(body),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    storeProposal: async (proposalData) => {
+        try {
+            const token = getAuthToken();
+            const body = { 
+                action: "storeProposal", 
+                ...proposalData,
+                token: token
+            };
+            
+            const response = await fetch(`${API_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(body),
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    // Reporting & Analytics endpoints
+    getPipelineSummary: async () => {
+        try {
+            const token = getAuthToken();
+            const url = token 
+                ? `${API_URL}?action=getPipelineSummary&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getPipelineSummary`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    getRevenueForecast: async () => {
+        try {
+            const token = getAuthToken();
+            const url = token 
+                ? `${API_URL}?action=getRevenueForecast&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getRevenueForecast`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    getTopOpportunities: async (limit = 10) => {
+        try {
+            const token = getAuthToken();
+            const url = token 
+                ? `${API_URL}?action=getTopOpportunities&limit=${limit}&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getTopOpportunities&limit=${limit}`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    getTasksDueTodayOverdue: async () => {
+        try {
+            const token = getAuthToken();
+            const url = token 
+                ? `${API_URL}?action=getTasksDueTodayOverdue&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getTasksDueTodayOverdue`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    getLeadSourceEffectiveness: async () => {
+        try {
+            const token = getAuthToken();
+            const url = token 
+                ? `${API_URL}?action=getLeadSourceEffectiveness&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getLeadSourceEffectiveness`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    getRepPerformanceScorecard: async () => {
+        try {
+            const token = getAuthToken();
+            const url = token 
+                ? `${API_URL}?action=getRepPerformanceScorecard&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getRepPerformanceScorecard`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    getProductCategoryDemand: async () => {
+        try {
+            const token = getAuthToken();
+            const url = token 
+                ? `${API_URL}?action=getProductCategoryDemand&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getProductCategoryDemand`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
+    },
+
+    getAllReports: async () => {
+        try {
+            const token = getAuthToken();
+            const url = token 
+                ? `${API_URL}?action=getAllReports&token=${encodeURIComponent(token)}`
+                : `${API_URL}?action=getAllReports`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("API Error:", error);
+            return { status: "error", message: error.message };
+        }
     }
 };

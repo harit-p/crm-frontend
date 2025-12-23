@@ -7,6 +7,7 @@ import { StageMoveModal } from './StageMoveModal';
 import { DealDetailsModal } from './DealDetailsModal';
 import { ExportButton } from './ExportButton';
 import { Layout, RefreshCw, LogOut, User, Plus } from 'lucide-react';
+import { NotificationBell } from './NotificationBell';
 
 const STAGES = [
     "New Lead", "Contact Made", "Discovery Completed", "Qualified Opportunity",
@@ -302,8 +303,8 @@ export const KanbanBoard = () => {
                 </div>
 
                 <nav className="space-y-1">
-                    <a href="#" className="active">Pipeline</a>
-                    {hasPermission('view_analytics') && <a href="#">Analytics</a>}
+                    <a href="#" className="active" onClick={(e) => { e.preventDefault(); navigate('/dashboard'); }}>Pipeline</a>
+                    {hasPermission('view_analytics') && <a href="#" onClick={(e) => { e.preventDefault(); navigate('/analytics'); }}>Analytics</a>}
                     {user?.Role !== 'Exec' && <a href="#" onClick={(e) => { e.preventDefault(); navigate('/tasks'); }}>Tasks</a>}
                     {hasPermission('export_data') && <a href="#">Export</a>}
                     <a href="#" onClick={(e) => { e.preventDefault(); navigate('/contacts'); }}>Contacts</a>
@@ -315,6 +316,7 @@ export const KanbanBoard = () => {
                 <header>
                     <h1>Sales Pipeline</h1>
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        <NotificationBell />
                         <button 
                             onClick={handleCreateNewLead} 
                             disabled={!canCreateLead()}
@@ -356,6 +358,7 @@ export const KanbanBoard = () => {
                         </button>
                     </div>
                 </header>
+
 
                 {loading ? (
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>

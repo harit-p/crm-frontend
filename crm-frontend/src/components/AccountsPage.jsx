@@ -257,11 +257,11 @@ export const AccountsPage = () => {
 
                 <nav className="space-y-1">
                     <a href="#" onClick={(e) => { e.preventDefault(); navigate('/dashboard'); }}>Pipeline</a>
-                    {hasPermission('view_analytics') && <a href="#">Analytics</a>}
+                    {hasPermission('view_analytics') && <a href="#" onClick={(e) => { e.preventDefault(); navigate('/analytics'); }}>Analytics</a>}
                     {user?.Role !== 'Exec' && <a href="#" onClick={(e) => { e.preventDefault(); navigate('/tasks'); }}>Tasks</a>}
                     {hasPermission('export_data') && <a href="#">Export</a>}
                     <a href="#" onClick={(e) => { e.preventDefault(); navigate('/contacts'); }}>Contacts</a>
-                    <a href="#" className="active">Accounts</a>
+                    <a href="#" className="active" onClick={(e) => { e.preventDefault(); navigate('/accounts'); }}>Accounts</a>
                 </nav>
             </div>
 

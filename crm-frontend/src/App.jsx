@@ -7,6 +7,7 @@ import { KanbanBoard } from './components/KanbanBoard';
 import { TasksPage } from './components/TasksPage';
 import { ContactsPage } from './components/ContactsPage';
 import { AccountsPage } from './components/AccountsPage';
+import { AnalyticsDashboard } from './components/AnalyticsDashboard';
 
 function App() {
   return (
@@ -44,6 +45,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <AccountsPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/analytics" 
+            element={
+              <ProtectedRoute>
+                <AnalyticsDashboard />
               </ProtectedRoute>
             } 
           />

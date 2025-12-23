@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { crmApi } from '../api';
 import { Layout, LogOut, Plus, Edit, Trash2, RefreshCw, Calendar, User, Briefcase, Target } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { NotificationBell } from './NotificationBell';
 
 export const TasksPage = () => {
     const { user, logout, canEditTask, hasPermission } = useAuth();
@@ -324,8 +325,8 @@ export const TasksPage = () => {
 
                 <nav className="space-y-1">
                     <a href="#" onClick={(e) => { e.preventDefault(); navigate('/dashboard'); }}>Pipeline</a>
-                    {hasPermission('view_analytics') && <a href="#">Analytics</a>}
-                    {user?.Role !== 'Exec' && <a href="#" className="active">Tasks</a>}
+                    {hasPermission('view_analytics') && <a href="#" onClick={(e) => { e.preventDefault(); navigate('/analytics'); }}>Analytics</a>}
+                    {user?.Role !== 'Exec' && <a href="#" className="active" onClick={(e) => { e.preventDefault(); navigate('/tasks'); }}>Tasks</a>}
                     {hasPermission('export_data') && <a href="#">Export</a>}
                     <a href="#" onClick={(e) => { e.preventDefault(); navigate('/contacts'); }}>Contacts</a>
                     <a href="#" onClick={(e) => { e.preventDefault(); navigate('/accounts'); }}>Accounts</a>
@@ -336,6 +337,7 @@ export const TasksPage = () => {
                 <header>
                     <h1>Tasks</h1>
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        <NotificationBell />
                         {canCreate() && (
                             <button onClick={handleCreate} style={{
                                 display: 'flex',
