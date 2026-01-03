@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, DollarSign, User, Calendar, MapPin, FileText, TrendingUp, Paperclip, CheckSquare } from 'lucide-react';
+import { X, DollarSign, User, Calendar, MapPin, FileText, TrendingUp, Paperclip, CheckSquare, Mail, Clock, Upload } from 'lucide-react';
 import { crmApi } from '../api';
+import { EmailModal, CalendarModal, DocumentModal } from './IntegrationModals';
 
 export const DealDetailsModal = ({ isOpen, onClose, deal }) => {
   const [tasks, setTasks] = useState([]);
   const [loadingTasks, setLoadingTasks] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
+  const [showDocumentModal, setShowDocumentModal] = useState(false);
+  const [sending, setSending] = useState(false);
   
   useEffect(() => {
     if (isOpen && deal && (deal.id || deal['Opportunity ID'])) {
@@ -133,29 +138,98 @@ export const DealDetailsModal = ({ isOpen, onClose, deal }) => {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                 <div style={{ flex: 1 }}>
                   <h2 style={{ margin: 0, fontSize: '24px', fontWeight: '700', marginBottom: '4px' }}>
-                    {deal.name || 'Opportunity Details'}
+                    {deal.name || deal['Opportunity Name'] || 'Opportunity Details'}
                   </h2>
                   <p style={{ margin: 0, opacity: 0.9, fontSize: '14px' }}>
-                    {deal.stage || 'No stage'}
+                    {deal.stage || deal.Stage || 'No stage'}
                   </p>
                 </div>
-                <button
-                  onClick={onClose}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '8px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    transition: 'background 0.2s'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
-                  onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
-                >
-                  <X size={24} color="white" />
-                </button>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  {/* Integration Action Buttons */}
+                  <button
+                    onClick={() => setShowEmailModal(true)}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '8px 12px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      color: 'white',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+                    title="Send Email"
+                  >
+                    <Mail size={16} />
+                  </button>
+                  <button
+                    onClick={() => setShowCalendarModal(true)}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '8px 12px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      color: 'white',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+                    title="Create Calendar Event"
+                  >
+                    <Clock size={16} />
+                  </button>
+                  <button
+                    onClick={() => setShowDocumentModal(true)}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '8px 12px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      color: 'white',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+                    title="Upload Document"
+                  >
+                    <Upload size={16} />
+                  </button>
+                  <button
+                    onClick={onClose}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '8px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      transition: 'background 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+                  >
+                    <X size={24} color="white" />
+                  </button>
+                </div>
               </div>
 
               {/* Key Metrics */}
@@ -514,6 +588,40 @@ export const DealDetailsModal = ({ isOpen, onClose, deal }) => {
               )}
             </div>
           </motion.div>
+
+          {/* Integration Modals */}
+          {showEmailModal && (
+            <EmailModal
+              deal={deal}
+              onClose={() => setShowEmailModal(false)}
+              onSuccess={() => {
+                setShowEmailModal(false);
+                fetchTasks(); // Refresh tasks to show the email tracking
+              }}
+            />
+          )}
+
+          {showCalendarModal && (
+            <CalendarModal
+              deal={deal}
+              onClose={() => setShowCalendarModal(false)}
+              onSuccess={() => {
+                setShowCalendarModal(false);
+                fetchTasks(); // Refresh tasks to show the calendar event
+              }}
+            />
+          )}
+
+          {showDocumentModal && (
+            <DocumentModal
+              deal={deal}
+              onClose={() => setShowDocumentModal(false)}
+              onSuccess={() => {
+                setShowDocumentModal(false);
+                // Optionally refresh deal data to show new document link
+              }}
+            />
+          )}
         </>
       )}
     </AnimatePresence>
